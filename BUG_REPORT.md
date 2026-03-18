@@ -9,19 +9,19 @@
 
 ## Summary
 
-| # | Endpoint | Severity | Status |
-|---|---|---|---|
-| BUG-001 | GET /booking | Medium | Open |
-| BUG-002 | GET /booking/:id | Low | Open |
-| BUG-003 | POST /auth | High | Open |
-| BUG-004 | POST /booking | High | Open |
-| BUG-005 | POST /booking | High | Open |
-| BUG-006 | PUT /booking/:id | Medium | Open |
-| BUG-007 | PUT /booking/:id | Medium | Open |
-| BUG-008 | PUT vs PATCH | Medium | Open |
-| BUG-009 | PATCH /booking/:id | Medium | Open |
-| BUG-010 | DELETE /booking/:id | Medium | Open |
-| BUG-011 | DELETE /booking/:id | Low | Open |
+| # | Endpoint | Severity | Status | Automated Test |
+|---|---|---|---|---|
+| BUG-001 | GET /booking | Medium | Open | ✅ |
+| BUG-002 | GET /booking/:id | Low | Open | ✅ |
+| BUG-003 | POST /auth | High | Open | ✅ |
+| BUG-004 | POST /booking | High | Open | ✅ |
+| BUG-005 | POST /booking | High | Open | ✅ |
+| BUG-006 | PUT /booking/:id | Medium | Open | ✅ |
+| BUG-007 | PUT /booking/:id | Medium | Open | ✅ |
+| BUG-008 | PUT vs PATCH | Medium | Open | ✅ |
+| BUG-009 | PATCH /booking/:id | Medium | Open | ✅ |
+| BUG-010 | DELETE /booking/:id | Medium | Open | ✅ |
+| BUG-011 | DELETE /booking/:id | Low | Open | ✅ |
 
 ---
 

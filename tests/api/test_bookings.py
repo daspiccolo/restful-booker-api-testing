@@ -1,6 +1,8 @@
 import requests
 import pytest
 
+from conftest import base_url
+
 
 class TestHealthCheck:
 
@@ -80,3 +82,87 @@ class TestGetBookingById:
         response = requests.get(f"{base_url}/booking/abc")
 
         assert response.status_code == 404
+
+class TestAuth:
+
+    def test_valid_credentials_returns_token(self, base_url):
+        payload = {
+            "username": "admin",
+            "password": "password123"
+        }
+
+        response = requests.post(f"{base_url}/auth", json=payload)
+        data = response.json()
+
+        assert response.status_code == 200
+        assert "token" in data
+        assert len(data["token"]) > 0
+
+    def test_invalid_credentials_returns_200_with_error(self, base_url):
+        # BUG-003: API returns 200 instead of 401 for invalid credentials
+        payload = {
+            "username": "admin",
+            "password": "wrongpassword"
+        }
+
+        response = requests.post(f"{base_url}/auth", json=payload)
+        data = response.json()
+
+        assert response.status_code == 200
+        assert "reason" in data
+        assert data["reason"] == "Bad credentials"
+
+    def test_empty_credentials_returns_200_with_error(self, base_url):
+        # BUG-003: API returns 200 instead of 400 for empty credentials
+        payload = {
+            "username": "",
+            "password": ""
+        }
+
+        response = requests.post(f"{base_url}/auth", json=payload)
+
+        assert response.status_code == 200
+
+class TestCreateBooking:
+
+    @pytest.fixture
+    def booking_payload(self):
+        return {
+            "firstname": "Debora",
+            "lastname": "Piccolo",
+            "totalprice": 150,
+            "depositpaid": True,
+            "bookingdates": {
+                "checkin": "2025-06-01",
+                "checkout": "2025-06-07"
+            },
+            "additionalneeds": "Breakfast"
+        }
+
+    def test_create_booking_returns_200(self, base_url, booking_payload):
+        response = requests.post(f"{base_url}/booking", json=booking_payload)
+
+        assert response.status_code == 200
+
+    def test_create_booking_returns_booking_id(self, base_url, booking_payload):
+        response = requests.post(f"{base_url}/booking", json=booking_payload)
+        data = response.json()
+
+        assert "bookingid" in data
+        assert isinstance(data["bookingid"], int)
+
+    def test_create_booking_returns_correct_data(self, base_url, booking_payload):
+        response = requests.post(f"{base_url}/booking", json=booking_payload)
+        data = response.json()["booking"]
+
+        assert data["firstname"] == booking_payload["firstname"]
+        assert data["lastname"] == booking_payload["lastname"]
+        assert data["totalprice"] == booking_payload["totalprice"]
+        assert data["depositpaid"] == booking_payload["depositpaid"]
+
+    def test_create_booking_without_required_fields_returns_500(self, base_url):
+    # BUG-004: API returns 500 instead of 400 for missing required fields
+        payload = {"firstname": "Debora"}
+
+        response = requests.post(f"{base_url}/booking", json=payload)
+        assert response.status_code == 500

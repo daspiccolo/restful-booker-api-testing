@@ -1,5 +1,7 @@
 # Restful Booker API Testing
 
+[![API Tests](https://github.com/daspiccolo/restful-booker-api-testing/actions/workflows/tests.yml/badge.svg)](https://github.com/daspiccolo/restful-booker-api-testing/actions/workflows/tests.yml)
+
 Exploratory and automated API testing project for the [Restful Booker API](https://restful-booker.herokuapp.com).
 
 This project follows a real QA workflow — starting with manual exploratory testing to understand the API behaviour and document bugs, followed by test automation with Python and Pytest.
@@ -11,9 +13,16 @@ This project follows a real QA workflow — starting with manual exploratory tes
 ```
 restful-booker-api-testing/
 │
-├── BUG_REPORT.md        ← 11 bugs found during manual testing
-├── README.md
-└── tests/               ← coming soon — automated tests in Python
+├── .github/
+│   └── workflows/
+│       └── tests.yml        ← CI pipeline with GitHub Actions
+├── tests/
+│   └── api/
+│       └── test_bookings.py ← automated test suites
+├── conftest.py              ← shared fixtures and configuration
+├── requirements.txt         ← project dependencies
+├── BUG_REPORT.md            ← 11 bugs found during manual testing
+└── README.md
 ```
 
 ---
@@ -47,6 +56,69 @@ All endpoints were tested manually using Postman before any automation was writt
 
 ---
 
+## Phase 2 — Test Automation ✅
+
+29 automated tests covering all 8 endpoints, organised by Test Suite.
+
+**Tech stack:**
+- Python 3.13
+- Pytest
+- Requests
+- Allure Pytest
+- GitHub Actions
+
+**Test Suites:**
+
+| Suite | Endpoint | Tests |
+|---|---|---|
+| TestHealthCheck | GET /ping | 2 |
+| TestGetAllBookings | GET /booking | 4 |
+| TestGetBookingById | GET /booking/:id | 4 |
+| TestAuth | POST /auth | 3 |
+| TestCreateBooking | POST /booking | 5 |
+| TestUpdateBooking | PUT /booking/:id | 4 |
+| TestPartialUpdateBooking | PATCH /booking/:id | 4 |
+| TestDeleteBooking | DELETE /booking/:id | 4 |
+| **Total** | | **29** |
+
+**Key implementation decisions:**
+
+- Fixtures in `conftest.py` centralise base URL and authentication token — if either changes, only one place needs updating
+- Dynamic test data — booking IDs are fetched at runtime instead of hardcoded, making tests resilient to external changes
+- Yield fixtures for setup and teardown — each test creates its own booking and deletes it after, ensuring test isolation
+- Known bugs are documented inline with comments referencing the BUG_REPORT.md
+
+---
+
+## CI/CD Pipeline
+
+Tests run automatically on every push and pull request to `main` via GitHub Actions.
+
+The pipeline runs on a clean Ubuntu environment, ensuring tests pass regardless of local machine configuration.
+
+---
+
+## How to Run Locally
+
+```bash
+# clone the repository
+git clone https://github.com/daspiccolo/restful-booker-api-testing.git
+cd restful-booker-api-testing
+
+# create and activate virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Mac/Linux
+
+# install dependencies
+pip install -r requirements.txt
+
+# run all tests
+pytest tests/ -v
+```
+
+---
+
 ## Key Findings
 
 During exploratory testing, the following systemic issues were identified across the API:
@@ -54,41 +126,9 @@ During exploratory testing, the following systemic issues were identified across
 - **Widespread misuse of 405** — used incorrectly for authentication failures and missing resources instead of 403 and 404
 - **Missing input validation** — POST and PATCH accept missing fields, wrong data types, and invalid date ranges without error
 - **Inconsistent authentication errors** — PUT and PATCH return different status codes for the same unauthenticated scenario
-- **500 error caused by empty body** — invalid client input should always return 4xx, never 5xx
+- **500 error caused by invalid input** — invalid client input should always return 4xx, never 5xx
 
----
-
-## Phase 2 — Test Automation 🚧 Coming Soon
-
-The manual test cases will be automated using:
-
-- **Python** — main language
-- **Pytest** — test framework
-- **Requests** — HTTP library
-- **Allure** — test reports
-- **GitHub Actions** — CI/CD pipeline
-
----
-
-## How to Run (coming soon)
-
-```bash
-# install dependencies
-pip install -r requirements.txt
-
-# run all tests
-pytest tests/ -v
-
-# run with Allure report
-pytest tests/ --alluredir=allure-results
-allure serve allure-results
-```
-
----
-
-## About This Project
-
-This project was built as part of a QA automation portfolio. The goal was to apply a real QA process — explore manually, document findings, then automate — rather than jumping straight to writing scripts without understanding the system under test.
+Full details in [BUG_REPORT.md](./BUG_REPORT.md)
 
 ---
 

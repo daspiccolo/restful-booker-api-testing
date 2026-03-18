@@ -286,8 +286,8 @@ class TestPartialUpdateBooking:
     @pytest.fixture
     def created_booking(self, base_url, auth_token):
         payload = {
-            "firstname": "Debora",
-            "lastname": "Piccolo",
+            "firstname": "Test",
+            "lastname": "User",
             "totalprice": 150,
             "depositpaid": True,
             "bookingdates": {
@@ -328,7 +328,7 @@ class TestPartialUpdateBooking:
         data = response.json()
 
         assert data["totalprice"] == 300
-        assert data["firstname"] == "Debora"
+        assert data["firstname"] == "Test"
 
     def test_partial_update_without_auth_returns_403(self, base_url, created_booking):
         payload = {"totalprice": 300}
@@ -356,8 +356,8 @@ class TestDeleteBooking:
     @pytest.fixture
     def created_booking(self, base_url, auth_token):
         payload = {
-            "firstname": "Debora",
-            "lastname": "Piccolo",
+            "firstname": "Test",
+            "lastname": "User",
             "totalprice": 150,
             "depositpaid": True,
             "bookingdates": {

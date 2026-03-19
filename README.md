@@ -115,6 +115,10 @@ pip install -r requirements.txt
 
 # run all tests
 pytest tests/ -v
+
+# generate Allure report
+pytest tests/ -v --alluredir=allure-results
+allure serve allure-results
 ```
 
 ---
